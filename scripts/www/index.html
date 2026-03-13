@@ -6,7 +6,7 @@
     <title>激活码生成器 · 绿野护眼</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
-        /* ---------- 全局重置与护眼绿色主题 (所有紫色调已移除) ---------- */
+        /* ---------- 全局重置与护眼绿色主题 ---------- */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,7 +15,6 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            /* 柔和护眼绿渐变 — 低饱和度、低蓝光 */
             background: linear-gradient(145deg, #c0ddb0 0%, #a0c89a 100%);
             min-height: 100vh;
             display: flex;
@@ -26,7 +25,6 @@
         }
 
         .card {
-            /* 半透明柔白底色，略带绿调 */
             background: rgba(245, 255, 240, 0.9);
             border-radius: 32px;
             box-shadow: 0 25px 45px rgba(40, 90, 40, 0.25);
@@ -40,7 +38,7 @@
 
         h2, h3 {
             text-align: center;
-            color: #1e4a2e;        /* 深墨绿 */
+            color: #1e4a2e;
             margin: 0 0 20px 0;
             font-weight: 600;
             letter-spacing: 0.5px;
@@ -104,7 +102,7 @@
 
         .selector {
             flex: 1 0 auto;
-            background: #dcf2d0;        /* 浅嫩绿 */
+            background: #dcf2d0;
             color: #1d4f1d;
             padding: 10px 12px;
             border-radius: 40px;
@@ -119,6 +117,17 @@
             box-shadow: 0 4px 8px rgba(90, 140, 70, 0.1);
         }
 
+        /* 密钥按钮样式微调 */
+        .key-selectors .selector {
+            font-size: 0.85rem;
+            white-space: normal;
+            word-break: break-word;
+            line-height: 1.3;
+            padding: 10px 6px;
+            flex: 1 1 0;
+            min-width: 100px;
+        }
+
         .selector:hover {
             background: #c0e0b0;
             transform: translateY(-2px);
@@ -126,7 +135,7 @@
         }
 
         .selector.active {
-            background: #2a7a3a;          /* 森林绿 */
+            background: #2a7a3a;
             color: white;
             border-color: #1f662f;
             box-shadow: 0 6px 12px rgba(40, 110, 40, 0.3);
@@ -151,11 +160,15 @@
                 padding: 8px 6px;
                 font-size: 0.8rem;
             }
+            .key-selectors .selector {
+                font-size: 0.75rem;
+                min-width: 80px;
+            }
         }
 
         button {
             flex: 1 1 auto;
-            background: #2f9e44;          /* 活力绿 */
+            background: #2f9e44;
             border: none;
             color: white;
             padding: 16px 12px;
@@ -181,7 +194,6 @@
             box-shadow: 0 6px 10px -4px #1f5a1f;
         }
 
-        /* 激活码展示区域 */
         .result-area {
             background: #ecfbe8;
             border-radius: 28px;
@@ -201,7 +213,7 @@
         }
 
         .error-message {
-            color: #c44536;           /* 保留暖红色，足够显眼 */
+            color: #c44536;
             font-size: 0.9rem;
             text-align: center;
             margin-top: 10px;
@@ -213,7 +225,6 @@
             display: none;
         }
 
-        /* 动态提示/时间区域 — 护眼浅绿基调 */
         .copy-toast {
             margin: 12px 0;
             padding: 10px 16px;
@@ -221,7 +232,7 @@
             text-align: center;
             font-size: 0.95rem;
             font-weight: 500;
-            background: #daf0d0;          /* 柔和绿 */
+            background: #daf0d0;
             color: #1d4f1d;
             transition: background 0.2s, color 0.2s, box-shadow 0.2s;
             border: 1px solid #b0d0a0;
@@ -229,18 +240,17 @@
         }
 
         .copy-toast.success {
-            background: #409c4e;          /* 深一点的绿，保持对比 */
+            background: #409c4e;
             color: white;
             border-color: #2f7a3a;
         }
 
         .copy-toast.error {
-            background: #d9534f;           /* 柔红，但保留 */
+            background: #d9534f;
             color: white;
             border-color: #b13b37;
         }
 
-        /* 微调密码页面风格一致 */
         #passwordSection input {
             background: #f4fff0;
         }
@@ -264,19 +274,13 @@
                 padding: 14px 10px;
                 font-size: 1rem;
             }
-            .selector {
-                font-size: 0.75rem;
-                padding: 8px 4px;
-            }
         }
 
-        /* 美化id输入框的增减按钮 (隐藏默认箭头，保持干净) */
         input[type=number]::-webkit-inner-spin-button,
         input[type=number]::-webkit-outer-spin-button {
             opacity: 0.6;
             height: 24px;
         }
-        /* 火狐 */
         input[type=number] {
             -moz-appearance: textfield;
         }
@@ -297,6 +301,16 @@
 
         <div id="generatorSection" class="hidden">
             <h2>🌿 激活码生成器</h2>
+
+            <!-- 密钥版本选择：只显示“旧密钥”和“新密钥”，不暴露具体字符串 -->
+            <div class="input-group">
+                <label>🔑 密钥版本</label>
+                <div class="key-selectors quick-selectors">
+                    <button class="selector" data-key="Format2044153997">旧密钥</button>
+                    <button class="selector" data-key="Franking.369?@66">新密钥</button>
+                </div>
+                <div class="hint">默认使用旧密钥</div>
+            </div>
 
             <div class="input-group">
                 <label>机器码 <span>(ID)</span></label>
@@ -335,8 +349,6 @@
     <script>
         (function() {
             // ---------- 加密固定参数 ----------
-            const KEY_STRING = "Format2044153997";
-            const KEY = CryptoJS.enc.Utf8.parse(KEY_STRING);
             const FIXED_KEY = 9411741;
 
             // ---------- DOM 元素 ----------
@@ -349,90 +361,79 @@
             const daysInput = document.getElementById('daysInput');
             const resultDisplay = document.getElementById('resultDisplay');
             const generateBtn = document.getElementById('generateBtn');
-            const selectorButtons = document.querySelectorAll('.selector');
             const copyToast = document.getElementById('copyToast');
 
-            // ---------- 状态变量 (时间/提示切换) ----------
-            let currentMode = 'time';           // 'time' 或 'toast'
-            let timeInterval = null;             // 时钟刷新句柄
-            let restoreTimer = null;              // 3秒恢复定时器
+            // 天数快捷按钮 (限定在#quickSelectors)
+            const selectorButtons = document.querySelectorAll('#quickSelectors .selector');
+            // 密钥按钮
+            const keyButtons = document.querySelectorAll('.key-selectors .selector');
 
-            // ---------- 工具函数：格式化当前时间 (YYYY-MM-DD HH:MM:SS) ----------
+            // 当前激活的密钥 (默认旧密钥 Format2044153997)
+            let currentKeyString = 'Format2044153997';
+
+            // 时间/提示模式
+            let currentMode = 'time';
+            let timeInterval = null;
+            let restoreTimer = null;
+
             function formatNow() {
                 const d = new Date();
-                const year = d.getFullYear();
-                const month = String(d.getMonth() + 1).padStart(2, '0');
-                const day = String(d.getDate()).padStart(2, '0');
-                const hours = String(d.getHours()).padStart(2, '0');
-                const minutes = String(d.getMinutes()).padStart(2, '0');
-                const seconds = String(d.getSeconds()).padStart(2, '0');
-                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}:${String(d.getSeconds()).padStart(2,'0')}`;
             }
 
-            // ---------- 更新时间显示 (仅当模式为time时更新内容) ----------
             function updateTimeDisplay() {
                 if (currentMode === 'time') {
                     copyToast.textContent = `🕒 当前时间：${formatNow()}`;
                 }
             }
 
-            // ---------- 停止所有定时器 (时钟 + 恢复定时器) ----------
             function stopAllTimers() {
-                if (timeInterval) {
-                    clearInterval(timeInterval);
-                    timeInterval = null;
-                }
-                if (restoreTimer) {
-                    clearTimeout(restoreTimer);
-                    restoreTimer = null;
-                }
+                if (timeInterval) clearInterval(timeInterval);
+                if (restoreTimer) clearTimeout(restoreTimer);
+                timeInterval = null; restoreTimer = null;
             }
 
-            // ---------- 启动时钟 (只有处于time模式才会真正刷新) ----------
             function startClock() {
                 stopAllTimers();
-                updateTimeDisplay();                    // 立即显示
+                updateTimeDisplay();
                 timeInterval = setInterval(updateTimeDisplay, 1000);
             }
 
-            // ---------- 恢复时间显示模式 (3秒后调用) ----------
             function restoreTimeMode() {
                 copyToast.classList.remove('success', 'error');
                 currentMode = 'time';
                 updateTimeDisplay();
                 restoreTimer = null;
-                if (!timeInterval) {
-                    startClock();
-                }
+                if (!timeInterval) startClock();
             }
 
-            // ---------- 显示临时提示 (覆盖时间) 并设置3秒返回 ----------
             function showTemporaryMessage(message, isError = false) {
                 if (restoreTimer) clearTimeout(restoreTimer);
                 currentMode = 'toast';
                 copyToast.textContent = message;
                 copyToast.classList.remove('success', 'error');
                 copyToast.classList.add(isError ? 'error' : 'success');
-                restoreTimer = setTimeout(() => {
-                    restoreTimeMode();
-                }, 3000);
+                restoreTimer = setTimeout(restoreTimeMode, 3000);
             }
 
-            // ---------- 密码验证 (正确后显示生成器，启动时钟) ----------
+            // 密码验证 (进入后设置密钥默认高亮)
             const CORRECT_PASSWORD = "199612";
-
             passwordSubmit.addEventListener('click', function() {
-                const entered = passwordInput.value;
-                if (entered === CORRECT_PASSWORD) {
+                if (passwordInput.value === CORRECT_PASSWORD) {
                     passwordSection.classList.add('hidden');
                     generatorSection.classList.remove('hidden');
                     passwordError.textContent = '';
+
+                    // 确保旧密钥按钮高亮
+                    keyButtons.forEach(btn => {
+                        if (btn.dataset.key === currentKeyString) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
 
                     copyToast.classList.remove('hidden');
                     currentMode = 'time';
                     copyToast.classList.remove('success', 'error');
                     startClock();
-
                     idInput.focus();
                     resultDisplay.textContent = '🌱 输入ID，点击生成';
                 } else {
@@ -441,18 +442,12 @@
                     passwordInput.focus();
                 }
             });
+            passwordInput.addEventListener('keypress', (e) => e.key === 'Enter' && passwordSubmit.click());
 
-            passwordInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    passwordSubmit.click();
-                }
-            });
-
-            // ---------- 激活码生成函数 ----------
+            // 生成激活码 (使用 currentKeyString)
             function generateActivationCode() {
                 const idStr = idInput.value.trim();
-                if (idStr === '') return '';
-
+                if (!idStr) return '';
                 const idVal = parseInt(idStr, 10);
                 if (isNaN(idVal)) return '';
 
@@ -461,99 +456,82 @@
 
                 const i3 = Math.floor(idVal / 2) + FIXED_KEY;
                 const i3Hex = i3.toString(16);
-
                 let plainText = i3Hex;
                 if (daysVal > 0) {
-                    const millis = daysVal * 86400000;
-                    plainText = i3Hex + 'z' + millis;
+                    plainText = i3Hex + 'z' + (daysVal * 86400000);
                 }
 
-                const encrypted = CryptoJS.AES.encrypt(plainText, KEY, {
+                const key = CryptoJS.enc.Utf8.parse(currentKeyString);
+                const encrypted = CryptoJS.AES.encrypt(plainText, key, {
                     mode: CryptoJS.mode.ECB,
                     padding: CryptoJS.pad.Pkcs7
                 });
-
                 return encrypted.ciphertext.toString(CryptoJS.enc.Hex);
             }
 
-            // ---------- 复制到剪贴板 ----------
+            // 复制
             function copyToClipboard(text) {
                 return navigator.clipboard.writeText(text);
             }
 
-            // ---------- 生成并复制 (点击主按钮) ----------
             function updateResultAndCopy() {
                 const code = generateActivationCode();
                 if (code) {
                     resultDisplay.textContent = code;
                     copyToClipboard(code)
-                        .then(() => {
-                            showTemporaryMessage('✅ 激活码已复制', false);
-                        })
-                        .catch(() => {
-                            showTemporaryMessage('❌ 复制失败，请手动复制', true);
-                        });
+                        .then(() => showTemporaryMessage('✅ 激活码已复制', false))
+                        .catch(() => showTemporaryMessage('❌ 复制失败，请手动复制', true));
                 } else {
                     resultDisplay.textContent = '⚠️ 请输入有效ID后生成';
                 }
             }
-
             generateBtn.addEventListener('click', updateResultAndCopy);
+            idInput.addEventListener('keypress', (e) => e.key === 'Enter' && generateBtn.click());
 
-            // 回车触发生成
-            idInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') {
-                    generateBtn.click();
-                }
-            });
-
-            // ---------- 高亮管理 (快捷天数) ----------
+            // 天数高亮管理
             function removeActiveClass() {
                 selectorButtons.forEach(btn => btn.classList.remove('active'));
             }
-
             function setActiveByDay(dayValue) {
                 removeActiveClass();
-                if (dayValue === undefined || dayValue === null) return;
-                const numericDay = typeof dayValue === 'number' ? dayValue : parseInt(dayValue, 10);
-                if (isNaN(numericDay)) return;
-
+                if (dayValue === undefined) return;
+                const num = parseInt(dayValue, 10);
+                if (isNaN(num)) return;
                 selectorButtons.forEach(btn => {
-                    const btnDay = parseInt(btn.dataset.days, 10);
-                    if (btnDay === numericDay) {
-                        btn.classList.add('active');
-                    }
+                    if (parseInt(btn.dataset.days, 10) === num) btn.classList.add('active');
                 });
             }
-
             function syncActiveFromInput() {
-                let rawValue = daysInput.value.trim();
-                if (rawValue === '') {
-                    setActiveByDay(0);
-                } else {
-                    const num = parseInt(rawValue, 10);
-                    if (!isNaN(num) && num >= 0) {
-                        setActiveByDay(num);
-                    } else {
-                        removeActiveClass();
-                    }
+                const raw = daysInput.value.trim();
+                if (raw === '') setActiveByDay(0);
+                else {
+                    const num = parseInt(raw, 10);
+                    if (!isNaN(num) && num >= 0) setActiveByDay(num);
+                    else removeActiveClass();
                 }
             }
-
             daysInput.addEventListener('input', syncActiveFromInput);
-
-            // 快捷按钮仅修改天数和高亮
             selectorButtons.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    const days = this.dataset.days;
-                    daysInput.value = days;
+                    daysInput.value = this.dataset.days;
                     syncActiveFromInput();
                 });
             });
-
-            // 初始化默认1天高亮
             daysInput.value = '1';
             setActiveByDay(1);
+
+            // 密钥按钮切换 (实际密钥存储在 data-key 中，页面只显示“旧/新”)
+            keyButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    keyButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentKeyString = this.dataset.key;  // 仍使用隐藏的实际密钥
+                });
+            });
+            // 初始高亮旧密钥
+            keyButtons.forEach(btn => {
+                if (btn.dataset.key === currentKeyString) btn.classList.add('active');
+            });
         })();
     </script>
 </body>
